@@ -1,5 +1,6 @@
 <script>
   import axios from 'axios';
+  import ProjectCard from '../../components/ProjectCard.vue';
 
   export default {
     data() {
@@ -8,22 +9,38 @@
         BASE_URL: 'http://127.0.0.1:8000/api',
       }
     },
+    components: {
+      ProjectCard,
+    },
     methods: {
       fetchProjects() {
         axios.get(`${this.BASE_URL}/projects`)
         .then((res) => {
           console.log(res)
+          this.projects = res.data.results.data
         })
       }
     },
     created() {
       this.fetchProjects()
+      console.log(this.projects)
     }
   }
 </script>
 
 <template>
-  <h1>Projects</h1>
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col text-center">
+        <h1>Projects</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col" v-for="project in projects">
+        <ProjectCard :project="project"/>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
