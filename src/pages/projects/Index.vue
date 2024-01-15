@@ -9,6 +9,7 @@
         currentPage: [],
         lastPage: [],
         projectApiPage: 1,
+        qtyForPage: 1,
         BASE_URL: 'http://127.0.0.1:8000/api',
       }
     },
@@ -16,30 +17,37 @@
       ProjectCard,
     },
     methods: {
-      fetchProjects(postApiPage) {
+      fetchProjects(postApiPage, qtyForPage) {
         axios.get(`${this.BASE_URL}/projects`, {
           params: {
             page: postApiPage,
+            qtyForPage: qtyForPage,
           }
         })
         .then((res) => {
-          console.log(res)
           this.projects = res.data.results.data
           this.currentPage = res.data.results.current_page
           this.lastPage = res.data.results.last_page
-          console.log(this.projects)
-          console.log(this.currentPage)
-          console.log(this.lastPage)
         })
       },
       getProjectApiPage($page) {
         this.projectApiPage = $page;
         console.log(this.projectApiPage);
-        this.fetchProjects($page)
+        this.fetchProjects($page, this.qtyForPage)
+      },
+      getFirstPage() {
+        this.fetchProjects(1, this.qtyForPage)
+      },
+      getLastPage() {
+        this.fetchProjects(this.lastPage, this.qtyForPage)
+      },
+      filtr(newQtyForPage){
+        this.qtyForPage = newQtyForPage;
+        this.fetchProjects(this.postApiPage, this.qtyForPage)
       }
     },
     created() {
-      this.fetchProjects(this.postApiPage)
+      this.fetchProjects(this.postApiPage, this.qtyForPage)
       console.log(this.projects)
     }
   }
@@ -56,11 +64,24 @@
       <div class="col">
         <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
         <p><strong>LastPage:</strong> {{ lastPage }}</p>
+        <p><strong>Projects for page:</strong>
+          <ul class="nav">
+              <li class="nav-item">
+                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtr(5)">5</button>
+              </li>
+              <li class="nav-item">
+                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtr(10)">10</button>
+              </li>
+              <li class="nav-item">
+                <button type="button" name='page'  class="btn btn-outline-secondary"  @click="filtr(20)">20</button>
+              </li>
+            </ul>
+        </p>
       </div>
       <nav aria-label="Page navigation example">
         <ul class="pagination">
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
+            <a class="page-link" href="#" aria-label="Previous" @click="getFirstPage()">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
@@ -68,7 +89,7 @@
             <a class="page-link" href="#" @click="getProjectApiPage(n)">{{ n }}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
+            <a class="page-link" href="#" aria-label="Next" @click="getLastPage()">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
@@ -76,7 +97,7 @@
       </nav>
     </div>
     <div class="row row-gap-5">
-      <div class="col-6" v-for="project in projects">
+      <div class="col-3" v-for="project in projects">
         <ProjectCard :project="project"/>
       </div>
     </div>
