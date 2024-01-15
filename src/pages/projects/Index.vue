@@ -17,7 +17,8 @@
         axios.get(`${this.BASE_URL}/projects`)
         .then((res) => {
           console.log(res)
-          this.projects = res.data.results.data
+          this.projects = res.data.results
+          console.log(this.projects)
         })
       }
     },
@@ -36,8 +37,8 @@
       </div>
     </div>
     <div class="row">
-      <div class="col" v-for="project in projects">
-        <ProjectCard :project="project"/>
+      <div class="col" >
+        <ProjectCard v-for="project in projects" :project="project"/>
       </div>
     </div>
   </div>
