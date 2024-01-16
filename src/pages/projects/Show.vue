@@ -30,6 +30,7 @@ export default {
                 <div class="col-6">
                     <div class="card">
                         <div class="card-body">
+                            <img src="https://picsum.photos/300/200" class="card-img-top" alt="...">
                             <h5 class="card-title">Titolo: {{ project.title }}</h5>
                             <p class="card-text">Slug:{{ project.slug}}</p>
                             <p v-if="project.type">
