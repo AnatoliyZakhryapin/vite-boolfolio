@@ -14,6 +14,12 @@ export default {
             .then(res => {
                 console.log('questo project', res.data.results)
                 this.project = res.data.results
+            }).catch((error) => {
+                console.log('post not found',error.response)
+                
+                if(error.response.status === 404) {
+                    this.$router.push({ name: 'not-found' })
+                }
             })
         }
     },
