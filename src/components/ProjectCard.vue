@@ -23,6 +23,9 @@ export default {
             <p class="card-text">{{ project.description }}</p>
             <p class="card-text">{{ project.user.name }}</p>
             <p class="card-text"><a href="#">{{ project.url }}</a></p>
+            <router-link :to="{ name: 'projects.show', params: { slug: project.slug }}" >
+                <a href="#" class="btn btn-primary">Apri progetto</a>
+            </router-link>
         </div>
     </div>
 </template>
