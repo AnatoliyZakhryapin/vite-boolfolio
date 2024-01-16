@@ -26,10 +26,10 @@
           }
         })
         .then((res) => {
-          this.projects = res.data.results.data
-          this.currentPage = res.data.results.current_page
-          this.lastPage = res.data.results.last_page
-          this.tecnologies = res.data.tecnologies
+          this.projects = res.data.results.projects.data
+          this.currentPage = res.data.results.projects.current_page
+          this.lastPage = res.data.results.projects.last_page
+          this.tecnologies = res.data.results.tecnologies
           console.log('res',res)
           console.log('prjects',this.projects)
           console.log('tec', this.tecnologies)
