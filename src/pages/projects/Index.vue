@@ -10,6 +10,7 @@
         lastPage: [],
         projectApiPage: 1,
         qtyForPage: 1,
+        tecnologies: [],
         BASE_URL: 'http://127.0.0.1:8000/api',
       }
     },
@@ -28,6 +29,10 @@
           this.projects = res.data.results.data
           this.currentPage = res.data.results.current_page
           this.lastPage = res.data.results.last_page
+          this.tecnologies = res.data.tecnologies
+          console.log('res',res)
+          console.log('prjects',this.projects)
+          console.log('tec', this.tecnologies)
         })
       },
       getProjectApiPage($page) {
@@ -60,10 +65,14 @@
         <h1>Projects</h1>
       </div>
     </div>
+
+    <!-- Menu filtri -->
     <div class="row mb-5">
       <div class="col">
         <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
         <p><strong>LastPage:</strong> {{ lastPage }}</p>
+
+        <!-- Quantita dei projects per pagina -->
         <p><strong>Projects for page:</strong>
           <ul class="nav">
               <li class="nav-item">
@@ -77,7 +86,17 @@
               </li>
             </ul>
         </p>
+
+        <!-- Scelta tecnologie utilizzate -->
+        <p class="d-flex gap-3"><strong>Tecnologies:</strong>
+          <div class="form-check" v-for="tecnology in tecnologies">>
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">{{ tecnology.name }}</label>
+          </div>
+        </p>
       </div>
+
+      <!-- Navigazione tra le pagine -->
       <nav aria-label="Page navigation example">
         <ul class="pagination">
           <li class="page-item">
@@ -96,6 +115,8 @@
         </ul>
       </nav>
     </div>
+
+    <!-- Stampa projects -->
     <div class="row row-gap-5">
       <div class="col-3" v-for="project in projects">
         <ProjectCard :project="project"/>
