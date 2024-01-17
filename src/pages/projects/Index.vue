@@ -13,7 +13,9 @@
         lastPage: 0,
         qtyProjectsForPage: 1,
         formRequest: {
-          typesSelected: []
+          typesSelected: [],
+          typesSelectedNull: [],
+          tecnologiesSelected: []
         },
       }
     },
@@ -242,23 +244,23 @@
         </p>
 
         <!-- Scelta tecnologie utilizzate -->
-        <!-- <p class="d-flex gap-3"><strong>Tecnologies:</strong>
-          <form action="">
-            <div class="form-check" v-for="tecnology in tecnologies">>
-              <input class="form-check-input" type="checkbox" v-model="f" :value="tecnology.id" :id="tecnology.id" @change="show()">
-              <label class="form-check-label">{{ tecnology.name }}</label>
-            </div>
-          </form>
-        </p> -->
-        
+        <p class="d-flex gap-3"><strong>Tecnologies:</strong>        
+          <div class="form-check" v-for="tecnology in tecnologies">>
+            <input class="form-check-input" type="checkbox" v-model="formRequest.tecnologiesSelected" :value="tecnology.id" :id="tecnology.id" @change="filtrPage()">
+            <label class="form-check-label">{{ tecnology.name }}</label>
+          </div>
+        </p>
+
         <!-- Scelta tipologia dei progetti -->
         <p class="d-flex gap-3"><strong>Types:</strong>
-          <form action="">
-            <div class="form-check" v-for="projectType in types">>
-              <input class="form-check-input" type="checkbox" v-model="formRequest.typesSelected" :value="projectType.id" :id="projectType.id" @change="filtrPage()">
-              <label class="form-check-label">{{ projectType.name }}</label>
-            </div>
-          </form>
+          <div class="form-check" v-for="projectType in types">>
+            <input class="form-check-input" type="checkbox" v-model="formRequest.typesSelected" :value="projectType.id" :id="projectType.id" @change="filtrPage()">
+            <label class="form-check-label">{{ projectType.name }}</label>
+          </div>
+          <div class="form-check">>
+            <input class="form-check-input" type="checkbox" v-model="formRequest.typesSelectedNull" :value="1" @change="filtrPage()">
+            <label class="form-check-label">Senza</label>
+          </div>
         </p>
       </div>
 
