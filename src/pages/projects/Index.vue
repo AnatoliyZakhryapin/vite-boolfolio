@@ -11,18 +11,23 @@
         projectApiPage: 1,
         qtyForPage: 1,
         tecnologies: [],
+        types: [],
         BASE_URL: 'http://127.0.0.1:8000/api',
+        formRequest: {
+          typesSelected: []
+        },
       }
     },
     components: {
       ProjectCard,
     },
     methods: {
-      fetchProjects(postApiPage, qtyForPage) {
+      fetchProjects(postApiPage, qtyForPage, formRequest) {
         axios.get(`${this.BASE_URL}/projects`, {
           params: {
             page: postApiPage,
             qtyForPage: qtyForPage,
+            formRequest: formRequest,
           }
         })
         .then((res) => {
@@ -30,25 +35,29 @@
           this.currentPage = res.data.results.projects.current_page
           this.lastPage = res.data.results.projects.last_page
           this.tecnologies = res.data.results.tecnologies
-          console.log('res',res)
-          console.log('prjects',this.projects)
-          console.log('tec', this.tecnologies)
+          this.types = res.data.results.types
+          console.log('risposta axios',res)
+          console.log('return projects',this.projects)
         })
       },
       getProjectApiPage($page) {
         this.projectApiPage = $page;
         console.log(this.projectApiPage);
-        this.fetchProjects($page, this.qtyForPage)
+        this.fetchProjects($page, this.qtyForPage, this.formRequest)
       },
-      getFirstPage() {
-        this.fetchProjects(1, this.qtyForPage)
+      goToFirstPage() {
+        this.fetchProjects( 1, this.qtyForPage, this.formRequest)
       },
-      getLastPage() {
-        this.fetchProjects(this.lastPage, this.qtyForPage)
+      goToLastPage() {
+        this.fetchProjects(this.lastPage, this.qtyForPage, this.formRequest)
       },
-      filtr(newQtyForPage){
+      filtrQtyPage(newQtyForPage){
         this.qtyForPage = newQtyForPage;
-        this.fetchProjects(this.postApiPage, this.qtyForPage)
+        this.fetchProjects(this.postApiPage, this.qtyForPage, this.formRequest)
+      },
+      filtrPage(){
+        console.log('checkbox', this.formRequest)
+        this.fetchProjects(this.postApiPage, this.qtyForPage, this.formRequest)
       }
     },
     created() {
@@ -76,23 +85,34 @@
         <p><strong>Projects for page:</strong>
           <ul class="nav">
               <li class="nav-item">
-                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtr(5)">5</button>
+                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtrQtyPage(5)">5</button>
               </li>
               <li class="nav-item">
-                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtr(10)">10</button>
+                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtrQtyPage(10)">10</button>
               </li>
               <li class="nav-item">
-                <button type="button" name='page'  class="btn btn-outline-secondary"  @click="filtr(20)">20</button>
+                <button type="button" name='page'  class="btn btn-outline-secondary"  @click="filtrQtyPage(20)">20</button>
               </li>
             </ul>
         </p>
 
         <!-- Scelta tecnologie utilizzate -->
-        <p class="d-flex gap-3"><strong>Tecnologies:</strong>
-          <div class="form-check" v-for="tecnology in tecnologies">>
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">{{ tecnology.name }}</label>
-          </div>
+        <!-- <p class="d-flex gap-3"><strong>Tecnologies:</strong>
+          <form action="">
+            <div class="form-check" v-for="tecnology in tecnologies">>
+              <input class="form-check-input" type="checkbox" v-model="f" :value="tecnology.id" :id="tecnology.id" @change="show()">
+              <label class="form-check-label">{{ tecnology.name }}</label>
+            </div>
+          </form>
+        </p> -->
+
+        <p class="d-flex gap-3"><strong>Types:</strong>
+          <form action="">
+            <div class="form-check" v-for="projectType in types">>
+              <input class="form-check-input" type="checkbox" v-model="formRequest.typesSelected" :value="projectType.id" :id="projectType.id" @change="filtrPage()">
+              <label class="form-check-label">{{ projectType.name }}</label>
+            </div>
+          </form>
         </p>
       </div>
 
@@ -100,7 +120,7 @@
       <nav aria-label="Page navigation example">
         <ul class="pagination">
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous" @click="getFirstPage()">
+            <a class="page-link" href="#" aria-label="Previous" @click="goToFirstPage()">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
@@ -108,7 +128,7 @@
             <a class="page-link" href="#" @click="getProjectApiPage(n)">{{ n }}</a>
           </li>
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next" @click="getLastPage()">
+            <a class="page-link" href="#" aria-label="Next" @click="goToLastPage()">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
