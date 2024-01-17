@@ -5,14 +5,13 @@
   export default {
     data() {
       return {
+        BASE_URL: 'http://127.0.0.1:8000/api',
         projects: [],
-        currentPage: [],
-        lastPage: [],
-        projectApiPage: 1,
-        qtyForPage: 1,
         tecnologies: [],
         types: [],
-        BASE_URL: 'http://127.0.0.1:8000/api',
+        currentPage: 1,
+        lastPage: 0,
+        qtyProjectsForPage: 1,
         formRequest: {
           typesSelected: []
         },
@@ -22,12 +21,12 @@
       ProjectCard,
     },
     methods: {
-      fetchProjects(postApiPage, qtyForPage, formRequest) {
+      fetchProjects() {
         axios.get(`${this.BASE_URL}/projects`, {
           params: {
-            page: postApiPage,
-            qtyForPage: qtyForPage,
-            formRequest: formRequest,
+            page: this.currentPage,
+            qtyForPage: this.qtyProjectsForPage,
+            formRequest: this.formRequest,
           }
         })
         .then((res) => {
@@ -40,29 +39,59 @@
           console.log('return projects',this.projects)
         })
       },
-      getProjectApiPage($page) {
-        this.projectApiPage = $page;
-        console.log(this.projectApiPage);
-        this.fetchProjects($page, this.qtyForPage, this.formRequest)
+      setCurrentPage($page) {
+        this.currentPage = $page;
+        this.fetchProjects();
       },
       goToFirstPage() {
-        this.fetchProjects( 1, this.qtyForPage, this.formRequest)
+        this.currentPage = 1;
+        this.fetchProjects();
       },
       goToLastPage() {
-        this.fetchProjects(this.lastPage, this.qtyForPage, this.formRequest)
+        this.currentPage = this.lastPage;
+        this.fetchProjects();
+      },
+      goToNextPage(){
+        if(this.currentPage < this.lastPage){
+          this.currentPage += 1;
+          this.fetchProjects();
+        } 
+      },
+      goToPreviousPage(){
+        if(this.currentPage > 1){
+          this.currentPage -= 1;
+          this.fetchProjects();
+        } 
+      },
+      isShowPageBtn(n){
+        let current = this.currentPage;
+        let previuos = current - 1;
+        let next = current + 1;
+
+        if(this.lastPage < 7 || current < 7) {
+          if(n < 7){
+            return true
+          }
+        }
+
+        if(this.lastPage > 7) {
+          if(n === current || n === previuos || n === next) {
+            return true
+          }
+        }
+        
       },
       filtrQtyPage(newQtyForPage){
-        this.qtyForPage = newQtyForPage;
-        this.fetchProjects(this.postApiPage, this.qtyForPage, this.formRequest)
+        this.qtyProjectsForPage = newQtyForPage;
+        this.fetchProjects();
       },
       filtrPage(){
         console.log('checkbox', this.formRequest)
-        this.fetchProjects(this.postApiPage, this.qtyForPage, this.formRequest)
+        this.fetchProjects();
       }
     },
     created() {
-      this.fetchProjects(this.postApiPage, this.qtyForPage)
-      console.log(this.projects)
+      this.fetchProjects();
     }
   }
 </script>
@@ -119,17 +148,37 @@
       <!-- Navigazione tra le pagine -->
       <nav aria-label="Page navigation example">
         <ul class="pagination">
+          <!-- Button Previous Page -->
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous" @click="goToFirstPage()">
-              <span aria-hidden="true">&laquo;</span>
+            <a class="page-link" href="#" aria-label="Previous" @click="goToPreviousPage()">
+              <span aria-hidden="true">Prev</span>
             </a>
           </li>
-          <li class="page-item" v-for="n in lastPage">
-            <a class="page-link" href="#" @click="getProjectApiPage(n)">{{ n }}</a>
+          <!-- Prima pagina -->
+          <li class="page-item" :class="{'active': n === currentPage}" v-if="currentPage > 6">
+            <a class="page-link" href="#" @click="goToFirstPage()"> 1 </a>
           </li>
+           <!-- Vuota -->
+          <li class="page-item" v-if="currentPage > 6">
+            <span class="page-link">...</span> 
+          </li>
+          <div class="page-item" v-for="n in lastPage">
+            <li v-if="isShowPageBtn(n)"  :class="{'active': n === currentPage}">
+              <a class="page-link" href="#" @click="setCurrentPage(n)">{{ n }}</a>
+            </li>
+          </div>
+          <!-- Vuota -->
+          <li class="page-item" v-if="lastPage > 6">
+            <span class="page-link">...</span> 
+          </li>
+          <!-- Ultima pagina -->
+          <li class="page-item" :class="{'active': n === currentPage}" v-if="lastPage > 6">
+            <a class="page-link" href="#" @click="goToLastPage()"> {{ lastPage }} </a>
+          </li>
+          <!-- Button Next Page -->
           <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next" @click="goToLastPage()">
-              <span aria-hidden="true">&raquo;</span>
+            <a class="page-link" href="#" aria-label="Next" @click="goToNextPage()">
+              <span aria-hidden="true">Next</span>
             </a>
           </li>
         </ul>
