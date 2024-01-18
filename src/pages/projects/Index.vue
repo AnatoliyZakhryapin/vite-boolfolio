@@ -11,12 +11,13 @@
         types: [],
         currentPage: 1,
         lastPage: 0,
-        qtyProjectsForPage: 1,
+        qtyProjectsForPage: 4,
         formRequest: {
           typesSelected: [],
           typesSelectedNull: [],
           tecnologiesSelected: []
         },
+        typeShowGrid: 'col-6',
       }
     },
     components: {
@@ -199,6 +200,12 @@
       filtrQtyPage(newQtyForPage){
         this.qtyProjectsForPage = newQtyForPage;
         this.currentPage = 1;
+
+        if( this.qtyProjectsForPage == 4) {
+          this.typeShowGrid = 'col-6';
+        } else if ( this.qtyProjectsForPage == 9) {
+          this.typeShowGrid = 'col-4';
+        }
         this.fetchProjects();
       },
       // Esegue chiamata fetch nel momento in qui viene selezionato un filtro
@@ -206,6 +213,10 @@
         console.log('checkbox', this.formRequest);
         this.currentPage = 1;
         this.fetchProjects();
+      },
+      // Restituisce true o false sul click del checkbox 
+      isChecked(id, form){
+        return form.includes(id);
       }
     },
     created() {
@@ -215,108 +226,165 @@
 </script>
 
 <template>
-  <div class="container">
-    <div class="row mb-5">
-      <div class="col text-center">
-        <h1>Projects</h1>
+  <div class="projects">
+
+    <!--Start Title -->
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col text-center">
+          <h1>Projects</h1>
+          <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
+          <p><strong>LastPage:</strong> {{ lastPage }}</p>
+        </div>
       </div>
     </div>
+    <!--End Title -->
 
-    <!-- Menu filtri -->
-    <div class="row mb-5">
-      <div class="col">
-        <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
-        <p><strong>LastPage:</strong> {{ lastPage }}</p>
-
-        <!-- Quantita dei projects per pagina -->
-        <p><strong>Projects for page:</strong>
-          <ul class="nav">
-              <li class="nav-item">
-                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtrQtyPage(5)">5</button>
-              </li>
-              <li class="nav-item">
-                <button type="button" name='page' class="btn btn-outline-secondary"  @click="filtrQtyPage(10)">10</button>
-              </li>
-              <li class="nav-item">
-                <button type="button" name='page'  class="btn btn-outline-secondary"  @click="filtrQtyPage(20)">20</button>
-              </li>
-            </ul>
-        </p>
-
-        <!-- Scelta tecnologie utilizzate -->
-        <p class="d-flex gap-3"><strong>Tecnologies:</strong>        
-          <div class="form-check" v-for="tecnology in tecnologies">>
-            <input class="form-check-input" type="checkbox" v-model="formRequest.tecnologiesSelected" :value="tecnology.id" :id="tecnology.id" @change="filtrPage()">
-            <label class="form-check-label">{{ tecnology.name }}</label>
+    <!--Start Menu filtri -->
+    <div class="projects__menu-filtr">
+      <div class="container">
+        <div class="row mb-5 row-gap-5">
+           <!--Start Scelta tipologia dei progetti -->
+          <div class="col ">
+            <div class="menu-filtr__types d-flex gap-5 justify-content-center" >
+              <div class="check-button" :class="{ 'checked': isChecked(projectType.id, formRequest.typesSelected) }" v-for="projectType in types">
+                <label class="check-button__label">
+                  <input class="check-button__input" type="checkbox" v-model="formRequest.typesSelected" :value="projectType.id" :id="projectType.id" @change="filtrPage()">
+                  <span>{{ projectType.name }}</span>
+                </label>
+              </div>
+              <div class="check-button" :class="{ 'checked': isChecked(1, formRequest.typesSelectedNull) }">
+                <label class="check-button__label">
+                  <input class="check-button__input" type="checkbox" v-model="formRequest.typesSelectedNull" :value="1" @change="filtrPage()">
+                  <span>Senza</span>
+                </label>
+              </div>
+            </div>
           </div>
-        </p>
+          <!--End Scelta tipologia dei progetti -->
 
-        <!-- Scelta tipologia dei progetti -->
-        <p class="d-flex gap-3"><strong>Types:</strong>
-          <div class="form-check" v-for="projectType in types">>
-            <input class="form-check-input" type="checkbox" v-model="formRequest.typesSelected" :value="projectType.id" :id="projectType.id" @change="filtrPage()">
-            <label class="form-check-label">{{ projectType.name }}</label>
+          <div class="col">
+            <div class="menu-filtr__tecnologies d-flex gap-5 justify-content-center" >
+              <div class="check-button" :class="{ 'checked': isChecked(tecnology.id, formRequest.tecnologiesSelected) }"  v-for="tecnology in tecnologies">
+                <label class="check-button__label">
+                  <input class="check-button__input" type="checkbox" v-model="formRequest.tecnologiesSelected" :value="tecnology.id" :id="tecnology.id" @change="filtrPage()">
+                  <span>{{ tecnology.name }}</span>
+                </label>
+              </div>
+            </div>
+            <!-- Scelta tecnologie utilizzate -->
           </div>
-          <div class="form-check">>
-            <input class="form-check-input" type="checkbox" v-model="formRequest.typesSelectedNull" :value="1" @change="filtrPage()">
-            <label class="form-check-label">Senza</label>
-          </div>
-        </p>
-      </div>
 
-      <!-- Navigazione tra le pagine -->
-      <nav aria-label="Page navigation example">
-        <ul class="pagination">
-          <!-- Button Previous Page -->
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous" @click="goToPreviousPage()">
-              <span aria-hidden="true">Prev</span>
-            </a>
-          </li>
-          <!-- Prima pagina -->
-          <li class="page-item" v-if="currentPage > 4">
-            <a class="page-link" href="#" @click="goToFirstPage()"> 1 </a>
-          </li>
-           <!-- Puntini inizio -->
-          <li class="page-item" v-if="currentPage > 4">
-            <span class="page-link">...</span> 
-          </li>
-
-          <!-- CICLO -->
-          <div class="page-item" v-for="n in getPageNavElement() ">
-            <li :class="{'active': getActiveToPagination(n)}">
-              <a class="page-link" href="#" @click="setCurrentPage(getNumberOfPagination(n))">{{ getNumberOfPagination(n) }}</a>
+        <!-- Navigazione tra le pagine -->
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <!-- Button Previous Page -->
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous" @click="goToPreviousPage()">
+                <span aria-hidden="true">Prev</span>
+              </a>
             </li>
-          </div>
+            <!-- Prima pagina -->
+            <li class="page-item" v-if="currentPage > 4">
+              <a class="page-link" href="#" @click="goToFirstPage()"> 1 </a>
+            </li>
+            <!-- Puntini inizio -->
+            <li class="page-item" v-if="currentPage > 4">
+              <span class="page-link">...</span> 
+            </li>
 
-          <!-- Puntini alla fine -->
-          <li class="page-item" v-if="isVisibleDotFine()">
-            <span class="page-link">...</span> 
-          </li>
-          <!-- Ultima pagina -->
-          <li class="page-item" v-if="isVisibleBtnLastPage()">
-            <a class="page-link" href="#" @click="goToLastPage()"> {{ lastPage }} </a>
-          </li>
-          <!-- Button Next Page -->
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next" @click="goToNextPage()">
-              <span aria-hidden="true">Next</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+            <!-- CICLO -->
+            <div class="page-item" v-for="n in getPageNavElement() ">
+              <li :class="{'active': getActiveToPagination(n)}">
+                <a class="page-link" href="#" @click="setCurrentPage(getNumberOfPagination(n))">{{ getNumberOfPagination(n) }}</a>
+              </li>
+            </div>
+
+            <!-- Puntini alla fine -->
+            <li class="page-item" v-if="isVisibleDotFine()">
+              <span class="page-link">...</span> 
+            </li>
+            <!-- Ultima pagina -->
+            <li class="page-item" v-if="isVisibleBtnLastPage()">
+              <a class="page-link" href="#" @click="goToLastPage()"> {{ lastPage }} </a>
+            </li>
+            <!-- Button Next Page -->
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next" @click="goToNextPage()">
+                <span aria-hidden="true">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        </div>
+      </div>
     </div>
+    <!--End Menu filtri -->
+
+
+<!-- Quantita dei projects per pagina -->
+<p><strong>Projects for page:</strong>
+              <ul class="nav">
+                  <li class="nav-item">
+                    <a href="#" @click="filtrQtyPage(4)">
+                      <font-awesome-icon :icon="['fas', 'table-cells-large']" />
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#" @click="filtrQtyPage(9)">
+                      <font-awesome-icon :icon="['fas', 'table-cells']" />
+                    </a>
+                  </li>
+                </ul>
+            </p>
 
     <!-- Stampa projects -->
-    <div class="row row-gap-5">
-      <div class="col-3" v-for="project in projects">
-        <ProjectCard :project="project"/>
+    <div class="container">
+      <div class="row row-gap-5">
+        <div :class="typeShowGrid" v-for="project in projects">
+          <ProjectCard :project="project"/>
+        </div>
       </div>
     </div>
+  
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  .check-button{
+    border-radius: 16px;
+    // border: 3px solid #a5a5a5;
+    color: #a5a5a5;
+    -webkit-box-shadow: inset -1px 3px 8px 5px rgba(255,0,0,0.82), 4px 1px 26px 0px rgba(255,0,0,0.82); 
+    box-shadow: inset -1px 3px 8px 5px rgba(255,0,0,0.82), 4px 1px 26px 0px rgba(255,0,0,0.82);
+    text-shadow: 0 0 15px rgba(255,255,255,.5), 0 0 10px rgba(255,255,255,.5), 0px 0px 20px rgba(206,0,0,0.62);
+
+    &.checked{
+      -webkit-box-shadow: inset -1px 3px 8px 5px rgba(0, 255, 0, 0.938), 4px 1px 26px 0px rgba(0, 255, 0, 0.938); 
+      box-shadow: inset -1px 3px 8px 5px rgba(0, 255, 0, 0.938), 4px 1px 26px 0px rgba(0, 255, 0, 0.938);
+      text-shadow: 0 0 15px rgba(255,255,255,.5), 0 0 10px rgba(255,255,255,.5), 0px 0px 20px rgba(206,0,0,0.62);
+      color: rgba(255, 255, 255, 0.767);
+    }
+
+    label {
+      padding: 15px 30px;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    label span {
+      
+    }
+
+    label input {
+      display: none;
+    }
+
+    
+  }
+
+
+
 
 
 </style>

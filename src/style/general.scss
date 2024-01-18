@@ -1,6 +1,11 @@
+@use './partials/variables' as*;
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body{
+  background-color: rgba(31,31,31,255) !important;
+  color: #f1f0f0 !important;
+}
