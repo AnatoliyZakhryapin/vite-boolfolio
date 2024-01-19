@@ -13,9 +13,14 @@ import {
     faTableCells as fasTableCells,
 } from '@fortawesome/free-solid-svg-icons'
 
+import { 
+	faSquare as farSquare,
+} from '@fortawesome/free-regular-svg-icons'
+
 library.add(
     fasTableCellsLarge,
     fasTableCells,
+    farSquare
 	)
 
 createApp(App).use( router ).component('font-awesome-icon', FontAwesomeIcon).mount('#app')

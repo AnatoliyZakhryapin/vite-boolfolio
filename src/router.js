@@ -5,6 +5,7 @@ import ProjectsIndex from './pages/projects/Index.vue';
 import ProjectsShow from './pages/projects/Show.vue';
 import Contacts from './pages/Contacts.vue';
 import NotFound from './pages/404.vue';
+import TypesArchive from './pages/types/Types.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -25,6 +26,12 @@ const router = createRouter({
             component: ProjectsShow,
         },
         {
+			path: '/types/:slug',
+			name: 'types.archive',
+            props: true,
+			component: TypesArchive,
+		},
+        {
             path: '/contacts',
             name: 'contacts',
             component: Contacts,
@@ -34,6 +41,7 @@ const router = createRouter({
 			name: 'not-found',
 			component: NotFound,
 		},
+        
     ]
 });
 

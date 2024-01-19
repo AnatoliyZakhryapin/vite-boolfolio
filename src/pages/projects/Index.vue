@@ -11,13 +11,13 @@
         types: [],
         currentPage: 1,
         lastPage: 0,
-        qtyProjectsForPage: 4,
+        qtyProjectsForPage: 9,
         formRequest: {
           typesSelected: [],
           typesSelectedNull: [],
           tecnologiesSelected: []
         },
-        typeShowGrid: 'col-6',
+        typeShowGrid: 'col-4',
       }
     },
     components: {
@@ -205,7 +205,10 @@
           this.typeShowGrid = 'col-6';
         } else if ( this.qtyProjectsForPage == 9) {
           this.typeShowGrid = 'col-4';
+        } else if ( this.qtyProjectsForPage == 1) {
+          this.typeShowGrid = 'col-12';
         }
+         
         this.fetchProjects();
       },
       // Esegue chiamata fetch nel momento in qui viene selezionato un filtro
@@ -229,12 +232,14 @@
   <div class="projects">
 
     <!--Start Title -->
-    <div class="container">
-      <div class="row mb-5">
-        <div class="col text-center">
-          <h1>Projects</h1>
-          <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
-          <p><strong>LastPage:</strong> {{ lastPage }}</p>
+    <div class="projects__title">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col text-center">
+            <h1>Projects</h1>
+            <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
+            <p><strong>LastPage:</strong> {{ lastPage }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -244,8 +249,8 @@
     <div class="projects__menu-filtr">
       <div class="container">
         <div class="row mb-5 row-gap-5">
-           <!--Start Scelta tipologia dei progetti -->
-          <div class="col ">
+          <!--Start Scelta tipologia dei progetti -->
+          <div class="col-12 ">
             <div class="menu-filtr__types d-flex gap-5 justify-content-center" >
               <div class="check-button" :class="{ 'checked': isChecked(projectType.id, formRequest.typesSelected) }" v-for="projectType in types">
                 <label class="check-button__label">
@@ -263,8 +268,9 @@
           </div>
           <!--End Scelta tipologia dei progetti -->
 
-          <div class="col">
-            <div class="menu-filtr__tecnologies d-flex gap-5 justify-content-center" >
+          <!--Start Scelta tecnologie dei progetti -->
+          <div class="col-12">
+            <div class="menu-filtr__tecnologies d-flex justify-content-around" >
               <div class="check-button" :class="{ 'checked': isChecked(tecnology.id, formRequest.tecnologiesSelected) }"  v-for="tecnology in tecnologies">
                 <label class="check-button__label">
                   <input class="check-button__input" type="checkbox" v-model="formRequest.tecnologiesSelected" :value="tecnology.id" :id="tecnology.id" @change="filtrPage()">
@@ -272,80 +278,97 @@
                 </label>
               </div>
             </div>
-            <!-- Scelta tecnologie utilizzate -->
           </div>
-
-        <!-- Navigazione tra le pagine -->
-        <nav aria-label="Page navigation example">
-          <ul class="pagination">
-            <!-- Button Previous Page -->
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous" @click="goToPreviousPage()">
-                <span aria-hidden="true">Prev</span>
-              </a>
-            </li>
-            <!-- Prima pagina -->
-            <li class="page-item" v-if="currentPage > 4">
-              <a class="page-link" href="#" @click="goToFirstPage()"> 1 </a>
-            </li>
-            <!-- Puntini inizio -->
-            <li class="page-item" v-if="currentPage > 4">
-              <span class="page-link">...</span> 
-            </li>
-
-            <!-- CICLO -->
-            <div class="page-item" v-for="n in getPageNavElement() ">
-              <li :class="{'active': getActiveToPagination(n)}">
-                <a class="page-link" href="#" @click="setCurrentPage(getNumberOfPagination(n))">{{ getNumberOfPagination(n) }}</a>
+          <!--End Scelta tecnologie dei progetti -->
+          
+          <!-- Start scelta layout della pagina -->
+          <div class="col d-flex justify-content-end">
+            <ul class="nav nav-layout">
+              <li class="nav-item" :class="{ 'active' : qtyProjectsForPage === 1}">
+                <a href="#" @click="filtrQtyPage(1)">
+                  <font-awesome-icon :icon="['far', 'square']" />
+                </a>
               </li>
-            </div>
-
-            <!-- Puntini alla fine -->
-            <li class="page-item" v-if="isVisibleDotFine()">
-              <span class="page-link">...</span> 
-            </li>
-            <!-- Ultima pagina -->
-            <li class="page-item" v-if="isVisibleBtnLastPage()">
-              <a class="page-link" href="#" @click="goToLastPage()"> {{ lastPage }} </a>
-            </li>
-            <!-- Button Next Page -->
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next" @click="goToNextPage()">
-                <span aria-hidden="true">Next</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
+              <li class="nav-item" :class="{ 'active' : qtyProjectsForPage === 4}">
+                <a href="#" @click="filtrQtyPage(4)">
+                  <font-awesome-icon :icon="['fas', 'table-cells-large']" />
+                </a>
+              </li>
+              <li class="nav-item" :class="{ 'active' : qtyProjectsForPage === 9}">
+                <a href="#" @click="filtrQtyPage(9)">
+                  <font-awesome-icon :icon="['fas', 'table-cells']" />
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!-- End scelta layout della pagina -->
         </div>
       </div>
     </div>
     <!--End Menu filtri -->
 
-
-<!-- Quantita dei projects per pagina -->
-<p><strong>Projects for page:</strong>
-              <ul class="nav">
-                  <li class="nav-item">
-                    <a href="#" @click="filtrQtyPage(4)">
-                      <font-awesome-icon :icon="['fas', 'table-cells-large']" />
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" @click="filtrQtyPage(9)">
-                      <font-awesome-icon :icon="['fas', 'table-cells']" />
-                    </a>
-                  </li>
-                </ul>
-            </p>
-
-    <!-- Stampa projects -->
-    <div class="container">
-      <div class="row row-gap-5">
-        <div :class="typeShowGrid" v-for="project in projects">
-          <ProjectCard :project="project"/>
+    <!--Start Show projects -->
+    <div class="projects__show-projects mb-5">
+      <div class="container">
+        <div class="row row-gap-5">
+          <div :class="typeShowGrid" v-for="project in projects">
+            <ProjectCard :project="project"/>
+          </div>
         </div>
       </div>
     </div>
+    <!-- End Show projects -->
+
+    <!-- Start Navigazione tra le pagine -->
+    <div class="projects__nav-pagination">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-auto">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination-custom">
+                <!-- Button Previous Page -->
+                <li class="page-item previous-btn">
+                  <a class="page-link" href="#/" aria-label="Previous" @click="goToPreviousPage()">
+                    <span aria-hidden="true">Prev</span>
+                  </a>
+                </li>
+                <!-- Prima pagina -->
+                <li class="page-item number-page" v-if="currentPage > 4">
+                  <a class="page-link" href="#/" @click="goToFirstPage()"> 1 </a>
+                </li>
+                <!-- Puntini inizio -->
+                <li class="page-item" v-if="currentPage > 4">
+                  <span class="page-link">...</span> 
+                </li>
+
+                <!-- CICLO -->
+                <div class="page-item" v-for="n in getPageNavElement() ">
+                  <li class="number-page" :class="{'active': getActiveToPagination(n)}">
+                    <a class="page-link" href="#/" @click="setCurrentPage(getNumberOfPagination(n))">{{ getNumberOfPagination(n) }}</a>
+                  </li>
+                </div>
+
+                <!-- Puntini alla fine -->
+                <li class="page-item" v-if="isVisibleDotFine()">
+                  <span class="page-link">...</span> 
+                </li>
+                <!-- Ultima pagina -->
+                <li class="page-item number-page" v-if="isVisibleBtnLastPage()">
+                  <a class="page-link" href="#/" @click="goToLastPage()"> {{ lastPage }} </a>
+                </li>
+                <!-- Button Next Page -->
+                <li class="page-item next-btn">
+                  <a class="page-link" href="#/" aria-label="Next" @click="goToNextPage()">
+                    <span aria-hidden="true">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Navigazione tra le pagine -->  
   
   </div>
 </template>
@@ -372,19 +395,57 @@
       text-align: center;
     }
 
-    label span {
-      
-    }
-
     label input {
       display: none;
     }
 
-    
   }
 
+  .nav-layout {
+    display: flex;
+    gap: 15px;
+    
+    & a {
+      // color: #f1f0f0;
+      color: #a5a5a5;
+      svg {
+        width: 30px;
+        height: 100%;
+      }
+    }
 
+    & .nav-item.active a {
+        color: #f1f0f0;
+      }
+  }
 
-
-
+  .pagination-custom {
+    padding: 0;
+    margin-bottom: 50px;
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    font-size: 50px;
+    color: #a5a5a5;
+    & li.number-page:hover,
+    & li.next-btn:hover,
+    & li.previous-btn:hover
+    {
+      color: #f1f0f0;
+      scale: 1.2;
+    }
+    & li.active {
+      text-shadow: 0px 0px 26px  rgba(0, 255, 0, 0.938);
+      color:  rgba(0, 255, 0, 0.938);
+    }
+    & li.active::after{
+      content: "";
+      display: block;
+      width: 30px;
+      height: 2px;
+      background-color:  rgba(0, 255, 0, 0.938);
+      box-shadow: 0px 0px 26px  rgba(0, 255, 0, 0.938);
+      margin: 0 auto;
+    }
+  }
 </style>
