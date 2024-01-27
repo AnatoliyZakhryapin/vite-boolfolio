@@ -10,9 +10,21 @@ export default {
 </script>
 
 <template>
-    <h1>{{ title }}</h1>
-    <h2>{{ jobtitle }}</h2>
+    <div class="home-page">
+        <div class="container">
+            <div class="row justify-content-center align-content-center ">
+                <div class="col-auto">
+                    <h1 class="fs-1">{{ title }}</h1>
+                    <h2>{{ jobtitle }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+    .home-page{
+        padding-top: 15vh;
+    }
 </style>
