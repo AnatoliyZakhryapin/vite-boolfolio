@@ -11,6 +11,7 @@ import { router } from './router'
 import { 
 	faTableCellsLarge as fasTableCellsLarge,
     faTableCells as fasTableCells,
+    faFilter as fasFilter,
 } from '@fortawesome/free-solid-svg-icons'
 
 import { 
@@ -20,7 +21,8 @@ import {
 library.add(
     fasTableCellsLarge,
     fasTableCells,
-    farSquare
+    farSquare,
+    fasFilter
 	)
 
 createApp(App).use( router ).component('font-awesome-icon', FontAwesomeIcon).mount('#app')
