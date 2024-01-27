@@ -10,10 +10,15 @@ import AppHeader from './components/AppHeader.vue';
 
 <template>
   <AppHeader></AppHeader>
-  <RouterView></RouterView>
+  <main class="page-main">
+    <RouterView></RouterView>
+  </main>
 </template>
 
 <style lang="scss">
 @use "./style/general.scss" ;
 
+.page-main{
+  padding-top: 150px;
+}
 </style>
