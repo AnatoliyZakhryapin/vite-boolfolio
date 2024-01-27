@@ -26,11 +26,11 @@
 </template>
 
 <style lang="scss" scoped>
-
     .page-header{
         position: fixed;
         width: 100%;
         z-index: 1;
+        height: 100px;
     }
     .nav-menu {
         display: flex;
@@ -43,17 +43,13 @@
                 color: currentColor;
             };
         };
-
         li:hover{
             color: #f1f0f0;
             scale: 1.2;
-            
         }
-
         li a.router-link-active{
             text-shadow: 0px 0px 26px  rgba(0, 255, 0, 0.938);
             color:  rgba(0, 255, 0, 0.938);
-
             &::after{
                 content: "";
                 display: block;
