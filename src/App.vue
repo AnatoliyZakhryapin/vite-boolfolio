@@ -19,6 +19,6 @@ import AppHeader from './components/AppHeader.vue';
 @use "./style/general.scss" ;
 
 .page-main{
-  padding-top: 150px;
+  padding-top: 100px;
 }
 </style>
