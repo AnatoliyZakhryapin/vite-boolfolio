@@ -9,8 +9,19 @@ export default {
 </script>
 
 <template>
-    <h1>{{ title }}</h1>
+    <div class="contacts-page">
+        <div class="container">
+            <div class="row justify-content-center align-content-center">
+                <div class="col-auto">
+                    <h1>{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+    .contacts-page{
+        padding-top: 15vh;
+    }
 </style>
