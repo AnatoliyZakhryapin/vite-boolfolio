@@ -18,6 +18,7 @@
           tecnologiesSelected: []
         },
         typeShowGrid: 'col-4',
+        isActiveFiltr: false,
       }
     },
     components: {
@@ -220,7 +221,11 @@
       // Restituisce true o false sul click del checkbox 
       isChecked(id, form){
         return form.includes(id);
-      }
+      },
+      // Apre menu filtri per tecnologies e types
+      openFiltrMenu(){
+        this.isActiveFiltr = !this.isActiveFiltr
+      },
     },
     created() {
       this.fetchProjects();
@@ -230,15 +235,14 @@
 
 <template>
   <div class="projects">
-
     <!--Start Title -->
     <div class="projects__title">
       <div class="container">
         <div class="row mb-5">
           <div class="col text-center">
-            <h1>Projects</h1>
-            <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
-            <p><strong>LastPage:</strong> {{ lastPage }}</p>
+            <h1>Progetti</h1>
+            <!-- <p><strong>CurrentPage:</strong> {{ currentPage }}</p>
+            <p><strong>LastPage:</strong> {{ lastPage }}</p> -->
           </div>
         </div>
       </div>
@@ -248,42 +252,53 @@
     <!--Start Menu filtri -->
     <div class="projects__menu-filtr">
       <div class="container">
-        <div class="row mb-5 row-gap-5">
-          <!--Start Scelta tipologia dei progetti -->
-          <div class="col-12 ">
-            <div class="menu-filtr__types d-flex gap-5 justify-content-center" >
-              <div class="check-button" :class="{ 'checked': isChecked(projectType.id, formRequest.typesSelected) }" v-for="projectType in types">
-                <label class="check-button__label">
-                  <input class="check-button__input" type="checkbox" v-model="formRequest.typesSelected" :value="projectType.id" :id="projectType.id" @change="filtrPage()">
-                  <span>{{ projectType.name }}</span>
-                </label>
-              </div>
-              <div class="check-button" :class="{ 'checked': isChecked(1, formRequest.typesSelectedNull) }">
-                <label class="check-button__label">
-                  <input class="check-button__input" type="checkbox" v-model="formRequest.typesSelectedNull" :value="1" @change="filtrPage()">
-                  <span>Senza</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <!--End Scelta tipologia dei progetti -->
+        <div class="row mb-5 row-gap-4">
 
-          <!--Start Scelta tecnologie dei progetti -->
-          <div class="col-12">
-            <div class="menu-filtr__tecnologies d-flex justify-content-around" >
-              <div class="check-button" :class="{ 'checked': isChecked(tecnology.id, formRequest.tecnologiesSelected) }"  v-for="tecnology in tecnologies">
-                <label class="check-button__label">
-                  <input class="check-button__input" type="checkbox" v-model="formRequest.tecnologiesSelected" :value="tecnology.id" :id="tecnology.id" @change="filtrPage()">
-                  <span>{{ tecnology.name }}</span>
-                </label>
+          <div class="col-12 overflow-hidden">
+            <div class="input-filtr" :class="{'active' : isActiveFiltr}">
+              <div class="row row-gap-5 py-4">
+                <!--Start Scelta tipologia dei progetti -->
+                <div class="col-12">
+                  <div class="menu-filtr__types d-flex gap-5 justify-content-center" >
+                    <div class="check-button" :class="{ 'checked': isChecked(projectType.id, formRequest.typesSelected) }" v-for="projectType in types">
+                      <label class="check-button__label">
+                        <input class="check-button__input" type="checkbox" v-model="formRequest.typesSelected" :value="projectType.id" :id="projectType.id" @change="filtrPage()">
+                        <span>{{ projectType.name }}</span>
+                      </label>
+                    </div>
+                    <div class="check-button" :class="{ 'checked': isChecked(1, formRequest.typesSelectedNull) }">
+                      <label class="check-button__label">
+                        <input class="check-button__input" type="checkbox" v-model="formRequest.typesSelectedNull" :value="1" @change="filtrPage()">
+                        <span>Senza</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <!--End Scelta tipologia dei progetti -->
+
+                <!--Start Scelta tecnologie dei progetti -->
+                <div class="col-12">
+                  <div class="menu-filtr__tecnologies d-flex justify-content-around" >
+                    <div class="check-button" :class="{ 'checked': isChecked(tecnology.id, formRequest.tecnologiesSelected) }"  v-for="tecnology in tecnologies">
+                      <label class="check-button__label">
+                        <input class="check-button__input" type="checkbox" v-model="formRequest.tecnologiesSelected" :value="tecnology.id" :id="tecnology.id" @change="filtrPage()">
+                        <span>{{ tecnology.name }}</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <!--End Scelta tecnologie dei progetti -->
               </div>
             </div>
           </div>
-          <!--End Scelta tecnologie dei progetti -->
-          
-          <!-- Start scelta layout della pagina -->
-          <div class="col d-flex justify-content-end">
-            <ul class="nav nav-layout">
+          <!-- Start nav filtr -->
+          <div class="col d-flex">
+            <ul class="nav w-100">
+              <li class="nav-item flex-grow-1" :class="{ 'active' : isActiveFiltr }">
+                <a href="#" @click="openFiltrMenu()">
+                  <font-awesome-icon :icon="['fas', 'filter']" />
+                </a>
+              </li>
               <li class="nav-item" :class="{ 'active' : qtyProjectsForPage === 1}">
                 <a href="#" @click="filtrQtyPage(1)">
                   <font-awesome-icon :icon="['far', 'square']" />
@@ -301,7 +316,7 @@
               </li>
             </ul>
           </div>
-          <!-- End scelta layout della pagina -->
+          <!-- End nav filtr -->
         </div>
       </div>
     </div>
@@ -369,83 +384,85 @@
       </div>
     </div>
     <!-- End Navigazione tra le pagine -->  
-  
   </div>
 </template>
 
 <style lang="scss" scoped>
-  .check-button{
-    border-radius: 16px;
-    // border: 3px solid #a5a5a5;
-    color: #a5a5a5;
-    -webkit-box-shadow: inset -1px 3px 8px 5px rgba(255,0,0,0.82), 4px 1px 26px 0px rgba(255,0,0,0.82); 
-    box-shadow: inset -1px 3px 8px 5px rgba(255,0,0,0.82), 4px 1px 26px 0px rgba(255,0,0,0.82);
-    text-shadow: 0 0 15px rgba(255,255,255,.5), 0 0 10px rgba(255,255,255,.5), 0px 0px 20px rgba(206,0,0,0.62);
 
-    &.checked{
-      -webkit-box-shadow: inset -1px 3px 8px 5px rgba(0, 255, 0, 0.938), 4px 1px 26px 0px rgba(0, 255, 0, 0.938); 
-      box-shadow: inset -1px 3px 8px 5px rgba(0, 255, 0, 0.938), 4px 1px 26px 0px rgba(0, 255, 0, 0.938);
-      text-shadow: 0 0 15px rgba(255,255,255,.5), 0 0 10px rgba(255,255,255,.5), 0px 0px 20px rgba(206,0,0,0.62);
-      color: rgba(255, 255, 255, 0.767);
+  .projects{
+    .input-filtr{
+      height: 0px;
+      transition: height 1s;
+      &.active{
+        height: 210px;
+        transition: height 1s;
+      }
     }
-
-    label {
-      padding: 15px 30px;
-      min-width: 80px;
-      text-align: center;
-    }
-
-    label input {
-      display: none;
-    }
-
-  }
-
-  .nav-layout {
-    display: flex;
-    gap: 15px;
-    
-    & a {
-      // color: #f1f0f0;
+    .check-button{
+      border-radius: 16px;
+      // border: 3px solid #a5a5a5;
       color: #a5a5a5;
-      svg {
-        width: 30px;
-        height: 100%;
+      -webkit-box-shadow: inset -1px 3px 8px 5px rgba(255,0,0,0.82), 4px 1px 26px 0px rgba(255,0,0,0.82); 
+      box-shadow: inset -1px 3px 8px 5px rgba(255,0,0,0.82), 4px 1px 26px 0px rgba(255,0,0,0.82);
+      text-shadow: 0 0 15px rgba(255,255,255,.5), 0 0 10px rgba(255,255,255,.5), 0px 0px 20px rgba(206,0,0,0.62);
+      &.checked{
+        -webkit-box-shadow: inset -1px 3px 8px 5px rgba(0, 255, 0, 0.938), 4px 1px 26px 0px rgba(0, 255, 0, 0.938); 
+        box-shadow: inset -1px 3px 8px 5px rgba(0, 255, 0, 0.938), 4px 1px 26px 0px rgba(0, 255, 0, 0.938);
+        text-shadow: 0 0 15px rgba(255,255,255,.5), 0 0 10px rgba(255,255,255,.5), 0px 0px 20px rgba(206,0,0,0.62);
+        color: rgba(255, 255, 255, 0.767);
+      }
+      label {
+        padding: 15px 30px;
+        min-width: 80px;
+        text-align: center;
+      }
+      label input {
+        display: none;
       }
     }
-
-    & .nav-item.active a {
+    ul {
+      display: flex;
+      gap: 15px;
+      & a {
+        // color: #f1f0f0;
+        color: #a5a5a5;
+        svg {
+          width: 30px;
+          height: 100%;
+        }
+      }
+      & .nav-item.active a {
+          color: white;
+        }
+    }
+    .pagination-custom {
+      padding: 0;
+      margin-bottom: 50px;
+      list-style: none;
+      display: flex;
+      gap: 40px;
+      font-size: 50px;
+      color: #a5a5a5;
+      & li.number-page:hover,
+      & li.next-btn:hover,
+      & li.previous-btn:hover
+      {
         color: #f1f0f0;
+        scale: 1.2;
       }
-  }
-
-  .pagination-custom {
-    padding: 0;
-    margin-bottom: 50px;
-    list-style: none;
-    display: flex;
-    gap: 40px;
-    font-size: 50px;
-    color: #a5a5a5;
-    & li.number-page:hover,
-    & li.next-btn:hover,
-    & li.previous-btn:hover
-    {
-      color: #f1f0f0;
-      scale: 1.2;
-    }
-    & li.active {
-      text-shadow: 0px 0px 26px  rgba(0, 255, 0, 0.938);
-      color:  rgba(0, 255, 0, 0.938);
-    }
-    & li.active::after{
-      content: "";
-      display: block;
-      width: 30px;
-      height: 2px;
-      background-color:  rgba(0, 255, 0, 0.938);
-      box-shadow: 0px 0px 26px  rgba(0, 255, 0, 0.938);
-      margin: 0 auto;
+      & li.active {
+        text-shadow: 0px 0px 26px  rgba(0, 255, 0, 0.938);
+        color:  rgba(0, 255, 0, 0.938);
+      }
+      & li.active::after{
+        content: "";
+        display: block;
+        width: 30px;
+        height: 2px;
+        background-color:  rgba(0, 255, 0, 0.938);
+        box-shadow: 0px 0px 26px  rgba(0, 255, 0, 0.938);
+        margin: 0 auto;
+      }
     }
   }
 </style>
